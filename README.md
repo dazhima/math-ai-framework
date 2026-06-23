@@ -150,4 +150,4 @@ The framework was developed in the context of several complex variables and alge
 
 ---
 
-*Comments and questions: yan.he700@gmail.com*
+*Comments and questions: yanhe@gzhu.edu.cn*

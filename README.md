@@ -20,19 +20,71 @@ This framework addresses both problems.
 
 ---
 
-## What the framework is
+## The setup in one sentence
 
-**A modular note system with explicit dependency structure.** Every mathematical fact — a lemma, a computation, a definition — lives in its own file. Every file has machine-readable metadata encoding its position in the dependency tree: what it depends on, what depends on it, and where it sits relative to its parent context. The mathematical knowledge base becomes a codebase: modules, dependencies, and explicit state.
+You keep a **math vault in Obsidian**. The framework lives inside it as a folder called `_framework/`. Each research project (a paper you are writing, a topic you are studying, a course you are teaching) is a subfolder of the vault. When you open Claude in a project folder, it reads the project's configuration, finds the framework, and knows how to work with you.
 
-**A discipline for the human side.** The framework is not just a note format — it is a set of principles for *how* to use AI without letting it do the work that builds mathematical sense. The short version: attempt before asking, signal confusion precisely, never mistake fluent explanation for understanding.
+```
+your-math-vault/
+├── _framework/          ← this repository
+├── my-paper/
+│   ├── CLAUDE.md        ← project config (5 lines)
+│   └── notes…
+├── fourier-analysis/
+│   ├── CLAUDE.md
+│   └── notes…
+└── …
+```
 
-**A protocol for precise human-AI dialogue.** Every numbered step in a derivation carries a checkbox. When something is unclear, you annotate the specific step with a `?` and a comment. The AI responds to exactly that step — not the whole argument. This granularity matches the natural granularity of mathematical reasoning.
-
-**A set of collaboration principles for the AI.** The principles document tells the AI what mathematical collaboration actually requires: phenomena before formalism, global picture before local decomposition, proof as thought experiment rather than logical transcript, active diagnosis of understanding versus mere assent.
+This is the only infrastructure. There is no server, no plugin, no pipeline to set up.
 
 ---
 
-## The document format
+## How to start
+
+**Prerequisites:** [Obsidian](https://obsidian.md) (for the vault) and [Claude](https://claude.ai/download) (desktop app with Claude Code).
+
+**Step 1.** Clone this repository into your Obsidian math vault:
+```
+cd your-math-vault
+git clone https://github.com/dazhima/math-ai-framework _framework
+```
+
+**Step 2.** Create a folder for your project and put a `CLAUDE.md` in it:
+```markdown
+# CLAUDE.md
+
+parent: ../_framework/CLAUDE.md
+skills: math-research-framework, math-human-discipline
+
+## Goal
+[One sentence: what this project is about.]
+
+## Status
+[What you are currently working on.]
+```
+
+**Step 3.** Open Claude in that project folder and start working. Say *"write a module on [topic]"* or *"let's work through [theorem]"*. Claude reads the configuration, activates the framework, and the session begins.
+
+That is all. The principles, the note format, the pedagogy, and the human discipline are loaded automatically. You do not configure them; you just work.
+
+---
+
+## What the framework actually does
+
+**A modular note system with explicit dependencies.** Every mathematical fact — a lemma, a computation, a definition — lives in its own file. Every file has machine-readable metadata encoding its position in the dependency tree: what it depends on, what depends on it, and where it sits relative to its parent context. The mathematical knowledge base becomes a codebase of understanding: modules, dependencies, and explicit state.
+
+Research advances by **eliminating blackboxes**: any result you can quote but not yet reconstruct is a stub. Making it understood means working through it step by step until you can rebuild it independently. The notes track this state explicitly.
+
+**A discipline for the human side.** The framework is not just a note format — it is a set of principles for how to use AI without letting it do the work that builds mathematical sense. The short version: attempt before asking, signal confusion precisely, never mistake a fluent explanation for genuine understanding.
+
+**A protocol for precise human-AI dialogue.** Every numbered step in a derivation carries a checkbox. When something is unclear, you annotate the specific step with a `?` and a comment. The AI responds to exactly that step — not the whole argument. This granularity matches the natural granularity of mathematical reasoning.
+
+**Collaboration principles for the AI.** The principles document tells Claude what mathematical collaboration actually requires: phenomena before formalism, global picture before local decomposition, proof as thought experiment rather than logical transcript, active diagnosis of understanding versus mere assent.
+
+---
+
+## The note format
 
 Each note has two parts: **frontmatter** and **body**.
 
@@ -50,11 +102,9 @@ used_by: [nakano-positivity]
 ---
 ```
 
-The distinction between `parent`/`children` (tree position) and `depends_on`/`used_by` (logical flow) is deliberate. A note may logically depend on something outside its own subtree — say, a result from a different paper — and the framework accommodates this without conflating the two relations.
-
 The body follows a fixed shape: **Idea → Setup → Content → Conclusion**. The *Idea* states what the note is about in one to three sentences, before any formalism. The *Content* is a list of labelled, addressable entries — definitions, claims, examples — each with its own compact justification. The *Conclusion* is a self-contained summary that can be read in isolation.
 
-A note starts as a `stub` — the claim is stated, the proof is a blackbox. Understanding the mathematics means eliminating blackboxes: attaching the proof, working through the steps, annotating confusion, rebuilding. Research advances by making the implicit explicit.
+A note starts as a `stub` — the claim is stated, the proof is a blackbox. Understanding the mathematics means eliminating blackboxes: working through the steps, annotating confusion, rebuilding. A `stub` becomes `in-progress` becomes `understood`.
 
 ---
 
@@ -76,19 +126,9 @@ After working through the argument, you annotate:
 — [x] L3
 ```
 
-You say "L2" to the AI. It expands exactly that step. It does not re-explain the entire argument. When you have understood a step and can reconstruct it independently, the checkbox form is replaced by a single naturalized line — the step becomes background.
+You say "L2" to Claude. It expands exactly that step. It does not re-explain the entire argument. When you have understood a step and can reconstruct it independently, the checkbox form is replaced by a single naturalized line — the step becomes background.
 
 This is the mechanism by which a blackbox becomes a module: one step at a time, with precise localization of what remains unclear.
-
----
-
-## The subproject structure
-
-When a collection of notes on a subtopic grows large enough to need its own context, it becomes a *subproject*: a subfolder with its own configuration file, its own document tree, and a pointer back to the parent.
-
-The analogy is from scheme theory: there is no absolute scheme, only a scheme over a base. A research document is always a document over its parent context. The subproject inherits nothing from the parent by default — not the parent's full context, not its other subprojects, not its reference material. The parent pointer exists so that broader context is reachable when needed, not duplicated everywhere.
-
-This makes it possible to work on a focused subtopic without carrying the entire project's context, and to promote a subtopic to its own self-contained project without restructuring anything else.
 
 ---
 
@@ -98,21 +138,9 @@ The framework includes a discipline document for the human. This matters as much
 
 The deepest risk of AI-assisted mathematical work is not that you learn wrong things. It is that you stop building the faculties mathematical work requires: the tolerance for confusion, the courage to face a problem alone, the perceptual sense that grows only through sustained independent effort. These erode invisibly, session by session, because every session still feels productive.
 
-The framework's rules are direct: do not ask the AI to execute something you have the tools to attempt yourself. Do not say "yes, I see" when you have tracked the logic without grasping the mathematical fact — these are not the same state. Close the chat after any significant explanation and try to rebuild, even partially, even incorrectly. The gap you find when you try to rebuild is exactly what needed more time.
+The framework's rules are direct: do not ask Claude to execute something you have the tools to attempt yourself. Do not say "yes, I see" when you have tracked the logic without grasping the mathematical fact — these are not the same state. Close the chat after any significant explanation and try to rebuild, even partially, even incorrectly. The gap you find when you try to rebuild is exactly what needed more time.
 
 AI explanations are fluent. Fluent explanations produce the feeling of understanding without the thing itself. The test is not whether Claude's explanation made sense while you were reading it. The test is whether you can reproduce the mathematical fact — in different notation, in a new case, in response to a changed hypothesis — without the explanation in front of you.
-
----
-
-## What the AI is used for
-
-**Explanation and reformulation.** The AI is good at presenting the same mathematical content in different registers — algebraic, geometric, computational — and at finding the right level of detail for the specific step that is unclear. It is good at naming what is happening before giving the formal statement, and at constructing the toy case that exhibits the essential phenomenon.
-
-**Mechanical work.** The AI handles formalization, note structure, example generation, routine verification, and reference. These are not trivial — they are time-consuming tasks that interrupt mathematical flow. Delegating them to AI is appropriate.
-
-**Dialogue.** When you have a partial attempt, the AI is a good check: it finds the gap in your argument without replacing the attempt. When you understand a step but cannot articulate why, explaining it to the AI often surfaces the gap.
-
-**What the AI is not used for.** Deciding what to work on. Making the first attempt. Sitting with difficulty. Developing the pattern recognition that comes from sustained engagement with a single object. These remain yours, by design.
 
 ---
 
@@ -121,7 +149,7 @@ AI explanations are fluent. Fluent explanations produce the feeling of understan
 | File | Contents |
 |---|---|
 | `math-framework-spec.md` | The format specification: note templates, frontmatter schema, naming conventions, annotation system. |
-| `AI-human mathematical collaboration principles.md` | How the AI should behave: phenomena first, global picture before details, proof as thought experiment, diagnosis of understanding. |
+| `AI-human mathematical collaboration principles.md` | How Claude should behave: phenomena first, global picture before details, proof as thought experiment, diagnosis of understanding. |
 | `Human principles for AI-assisted mathematical work.md` | The human discipline: the muscle problem, fake understanding, the three-level division of labor. |
 | `FRAMEWORK — operating manual.md` | Technical map: what gets read and activated when, the skill table, how subprojects fit together. |
 | `USER MANUAL.md` | Practical how-to: common tasks, session habits, troubleshooting. |
@@ -132,21 +160,19 @@ AI explanations are fluent. Fluent explanations produce the feeling of understan
 
 ---
 
-## How to start
+## If you want to adopt only part of this
 
-**If you want to understand the framework before adopting any of it:** read `math-framework-human.md` for the design rationale, then `AI-human mathematical collaboration principles.md` for the pedagogy.
+**Only the AI collaboration principles** (no note system, no Obsidian): the reusable instruction block at the end of `AI-human mathematical collaboration principles.md` can be pasted at the start of any Claude session. It encodes the core pedagogy in ten points.
 
-**If you want to start using it immediately:** read `USER MANUAL.md`, then `math-framework-spec.md` for the format. The note template is short. The first note you write is the best introduction.
+**Only the human discipline**: `Human principles for AI-assisted mathematical work.md` stands alone. It requires no AI setup, no note format, no subproject structure. It is a discipline for protecting your mathematical independence while using any AI tool.
 
-**If you want to use the AI collaboration principles without the note system:** the reusable instruction block at the end of `AI-human mathematical collaboration principles.md` can be pasted at the start of any Claude session. It encodes the core pedagogy without requiring any other piece of the framework.
-
-**If you want only the human discipline:** `Human principles for AI-assisted mathematical work.md` stands alone. It requires no AI setup, no note format, no subproject structure. It is a discipline for protecting your mathematical independence while using any AI tool.
+**Only the note format**: `math-framework-spec.md` describes the templates and frontmatter schema. It can be adopted independently of Claude and used with any note-taking or AI system.
 
 ---
 
 ## A note on scope
 
-The framework was developed in the context of several complex variables and algebraic geometry — specifically, work on the Ross-Witt Nyström theorem, Ohsawa-Takegoshi extensions, Fourier analysis, and related background. But the design is domain-agnostic. The modular note structure, dependency graph, annotation system, and collaboration principles apply to any area of mathematics. The only assumption is that the work consists of understanding and building on existing results. That is essentially all of mathematics.
+The framework was developed in the context of several complex variables and algebraic geometry — work on the Ross–Witt Nyström theorem, Ohsawa–Takegoshi extensions, Fourier analysis, and related background. But the design is domain-agnostic. The modular note structure, dependency graph, annotation system, and collaboration principles apply to any area of mathematics. The only assumption is that the work consists of understanding and building on existing results. That is essentially all of mathematics.
 
 ---
 
